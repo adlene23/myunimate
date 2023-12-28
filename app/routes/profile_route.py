@@ -14,9 +14,9 @@ def get_avatar_url():
         # Query Supabase to get the avatar URL based on user ID
         result = supabase.from_('users').select('avatar_url').eq('id', user_id).execute()
 
-        if len(result['data']) > 0:
+        if user_id:
             avatar_url = result['data'][0]['avatar_url']
-            return jsonify({'avatar_url': avatar_url}), 200
+            return jsonify({'avatar_url': user_id}), 200
         else:
             return jsonify({'error': 'User not found'}), 404
 
