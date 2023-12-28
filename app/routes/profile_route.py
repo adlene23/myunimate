@@ -6,7 +6,7 @@ profile_bp = Blueprint('profile', __name__)
 
 # Define the route and function
 
-@profile_bp.route('/get_avatar_url', methods=['POST'])
+@profile_bp.route('/get_avatar_url', methods=['GET'])
 def get_avatar_url():
     try:
         supabase = connect_to_supabase()
