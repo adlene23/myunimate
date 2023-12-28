@@ -12,4 +12,4 @@ def hello():
 
   user_id = request.args.get('user_id')
   
-  return jsonify({'id' :request.url})
+  return jsonify({'id' :request.args})
