@@ -24,7 +24,7 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(post_bp, url_prefix='/post')
     app.register_blueprint(comment_bp, url_prefix='/comment')
-    app.register_blueprint(profile_bp, url_prefix='/')
+    app.register_blueprint(profile_bp, url_prefix='/profile')
     # Add more blueprints as needed for other tables/routes
 
     return app
