@@ -1,7 +1,5 @@
 from flask import Blueprint, jsonify
 from app.utils.database import connect_to_supabase
-from flask import request
-
 
 # Create a blueprint for home routes
 bp = Blueprint('home', __name__)
@@ -9,7 +7,8 @@ bp = Blueprint('home', __name__)
 # Define the route and function
 @bp.route('/')
 def hello():
+    # supabase = connect_to_supabase()
+    # res = supabase.table('users').select('*').execute()
 
-  user_id = request.args.get('user_id')
-  
-  return jsonify({'id':user_id})
+    # return jsonify({'data': res.data}), 200
+    return jsonify({'message': 'Signup failed', 'errors': ['hello']}), 400
