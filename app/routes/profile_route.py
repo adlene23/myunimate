@@ -28,7 +28,7 @@ def edit_profile():
 
             if avatar:
               
-                avatar_filename =  path=f'avatars/{user_id}/avatar',
+                avatar_filename =f'avatars/{userid}/avatar',
 
                 # Upload the new avatar image to Supabase storage with the unique filename
                 supabase.storage.from_("avatars").upload(
