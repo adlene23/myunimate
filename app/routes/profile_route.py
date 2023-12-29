@@ -27,15 +27,14 @@ def edit_profile():
                 user_data['bio'] = bio
 
             if avatar:
-                # Generate a unique filename for the new avatar based on timestamp
-                timestamp = int(time.time())
-                avatar_filename = f'avatars/{userid}/avatar_{timestamp}{os.path.splitext(avatar.filename)[1]}'
+              
+                avatar_filename =  path=f'avatars/{user_id}/avatar',
 
                 # Upload the new avatar image to Supabase storage with the unique filename
                 supabase.storage.from_("avatars").upload(
                     file=avatar.read(),
                     path=avatar_filename,
-                    file_options={"content-type": avatar.mimetype}
+                     file_options={"content-type": avatar.mimetype}  
                 )
 
                 # Get the public URL of the uploaded avatar image
@@ -49,8 +48,15 @@ def edit_profile():
 
             # Update the user's profile
             supabase.from_('users').update(user_data).eq('id', userid).execute()
+            return jsonify({
+           
+            'name': name,
+            'avatarUrl':avatar,
+            'bio':bio
+        }), 200
+            
 
-            return jsonify({'message': 'Profile updated successfully'}), 200
+            
         else:
             # User not found
             return jsonify({'error': 'User not found'}), 404
