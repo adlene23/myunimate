@@ -1,27 +1,59 @@
 from flask import Blueprint, jsonify, request
 from app.utils.database import connect_to_supabase
+import os
 
 # Create a blueprint for home routes
 profile_bp = Blueprint('profile', __name__)
 
 # Define the route and function
-@profile_bp.route('/get_avatar_url', methods=['POST'])
-def get_avatar_url():
+@profile_bp.route('/editprofile', methods=['POST'])
+def edit_profile():
     try:
         supabase = connect_to_supabase()
-        user_id = request.form.get('user_id')  # Use form instead of args for POST requests
+        data = request.form
+        bio = data.get('bio')
+        name = data.get('name')
+        userid = data.get('userid')
+        avatar = request.files.get('avatar')
 
-        if user_id:
-            # Query Supabase to get the avatar URL based on user ID
-            result = supabase.from_('users').select('avatar_url').eq('id', user_id).execute()
+        # Check if the user exists
+        existing_user = supabase.from_('users').select('*').eq('id', userid).execute()
 
-            if len(result['data']) > 0:
-                avatar_url = result['data'][0]['avatar_url']
-                return jsonify({'avatar_url': avatar_url}), 200
-            else:
-                return jsonify({'error': 'User not found'}), 404
+        if len(existing_user['data']) > 0:
+            # User exists, update the profile
+            user_data = {'name': name}
+
+            if bio:
+                user_data['bio'] = bio
+
+            if avatar:
+                # Generate a unique filename for the new avatar based on timestamp
+                timestamp = int(time.time())
+                avatar_filename = f'avatars/{userid}/avatar_{timestamp}{os.path.splitext(avatar.filename)[1]}'
+
+                # Upload the new avatar image to Supabase storage with the unique filename
+                supabase.storage.from_("avatars").upload(
+                    file=avatar.read(),
+                    path=avatar_filename,
+                    file_options={"content-type": avatar.mimetype}
+                )
+
+                # Get the public URL of the uploaded avatar image
+                avatar_url = supabase.storage.from_('avatars').get_public_url(avatar_filename)
+                user_data['avatar_url'] = avatar_url
+
+                # If the new avatar is uploaded successfully, remove the previous avatar
+                previous_avatar_url = existing_user['data'][0].get('avatar_url')
+                if previous_avatar_url:
+                    supabase.storage.from_("avatars").delete(previous_avatar_url)
+
+            # Update the user's profile
+            supabase.from_('users').update(user_data).eq('id', userid).execute()
+
+            return jsonify({'message': 'Profile updated successfully'}), 200
         else:
-            return jsonify({'error': 'User ID not provided'}), 400
+            # User not found
+            return jsonify({'error': 'User not found'}), 404
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

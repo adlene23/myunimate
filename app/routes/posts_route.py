@@ -12,7 +12,7 @@ def addPost():
     userId = data.get('userId')
     content = data.get('content')
     image = request.files.get('image')
-
+    
     try:
         post_data = {'user_id': userId, 'content': content}
         res = supabase.table('posts').insert(post_data).execute()
