@@ -1,6 +1,6 @@
 
 from supabase import create_client
-
+supabase_url = "https://rhfvjesulpmswnuzmrmz.supabase.co"
 # Function to establish Supabase connection
 def connect_to_supabase():
     # Replace 'your_url' and 'your_key' with your actual Supabase URL and Key
